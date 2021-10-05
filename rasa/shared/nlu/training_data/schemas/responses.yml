@@ -51,6 +51,8 @@ schema;responses:
               allowempty: True
           channel:
             type: "str"
+          language:
+            type: "str"
           metadata:
             type: "any"
           condition:
