@@ -200,15 +200,6 @@ class Domain:
         Returns:
             The instantiated `Domain` object.
         """
-        
-        # Teemu Hirsimäki 14.10.2021: When training data comes through
-        # model/train endpoint, rasa stores data in a single file with keys such
-        # as (domain, stories, nlu, config). Fetch domain data from domain key
-        # if it exist.
-        domain = data.get('domain')
-        if domain is not None:
-            data = domain
-            
         responses = data.get(KEY_RESPONSES, {})
         slots = cls.collect_slots(data.get(KEY_SLOTS, {}))
         additional_arguments = data.get("config", {})

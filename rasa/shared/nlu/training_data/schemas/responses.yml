@@ -12,8 +12,6 @@ schema;responses:
         required: True
         allowempty: False
         mapping:
-          language:
-            type: "str"
           text:
             type: "str"
           image:
