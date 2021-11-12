@@ -310,17 +310,17 @@ def test_extract_requested_slot_from_text_with_not_intent():
     ],
 )
 async def test_validation(value, operator, comparatum, result, caplog):
-    spec = {
-        "name": "default_form",
-        "slots": [
+    form_spec = {
+        "some_slot": [
             {
-                "name": "some_slot",
+                "type": "from_intent",
+                "value": value,
                 "validation": {"operator": operator, "comparatum": comparatum,},
             }
         ],
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot")
+    form, tracker = new_form_and_tracker(form_spec, "some_slot")
     tracker.update(UserUttered(entities=[{"entity": "some_slot", "value": value}]))
 
     events = await form.validate(OutputChannel(), nlg, tracker, Domain.empty())
