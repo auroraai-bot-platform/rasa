@@ -17,8 +17,8 @@ import pytest
 nlg = BotfrontTemplatedNaturalLanguageGenerator()
 
 
-def new_form_and_tracker(form_spec, requested_slot, additional_slots=[]):
-    form = ActionBotfrontForm("default_form")
+def new_form_and_tracker(form_spec, requested_slot, element=None, additional_slots=[]):
+    form = ActionBotfrontForm(form_spec.get("name"))
     tracker = DialogueStateTracker.from_dict(
         "default",
         [],
@@ -28,7 +28,10 @@ def new_form_and_tracker(form_spec, requested_slot, additional_slots=[]):
             Slot(name="requested_slot", initial_value=requested_slot),
         ],
     )
-    form.form_spec = form_spec  # load spec manually
+    if element:
+        form.form_spec = form_spec[element]  # load spec manually
+    else:
+        form.form_spec = form_spec
     return form, tracker
 
 
@@ -148,9 +151,13 @@ def test_extract_requested_slot_default():
     """Test default extraction of a slot value from entity with the same name
     """
 
-    form_spec = {}
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+        }
+    }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(
         UserUttered(entities=[{"entity": "some_slot", "value": "some_value"}])
     )
@@ -166,15 +173,23 @@ def test_extract_requested_slot_from_entity_no_intent():
         and any intent
     """
 
-    form_spec = {
-        "some_slot": [
-            {"type": "from_entity",
-             "entity": ["some_entity"]
-             }
-        ]
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+                "some_slot": [
+                    {"type": "from_entity",
+                     "entity": "some_entity",
+                     "filling": [{"type": "from_entity",
+                                  "entity": ["some_entity"]}],
+                     "utter_on_new_valid_slot": False,
+                     "validation": {"comparatum": ["value1", "value2"],
+                                    "operator": "is_in"}
+                     }
+                ]
+        }
     }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(
         UserUttered(entities=[{"entity": "some_entity", "value": "some_value"}])
     )
@@ -190,17 +205,24 @@ def test_extract_requested_slot_from_entity_with_intent():
         and certain intent
     """
 
-    form_spec = {
-        "some_slot": [
-            {
-                "type": "from_entity",
-                "entity": ["some_entity"],
-                "intent": ["some_intent"],
-            }
-        ]
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+                "some_slot": [
+                    {"type": "from_entity",
+                     "entity": "some_entity",
+                     "filling": [{"type": "from_entity",
+                              "entity": ["some_entity"],
+                              "intent": ["some_intent"]}],
+                     "utter_on_new_valid_slot": False,
+                     "validation": {"comparatum": ["value1", "value2"],
+                                    "operator": "is_in"}
+                     }
+                ]
+        }
     }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(
         UserUttered(
             intent={"name": "some_intent", "confidence": 1.0},
@@ -230,17 +252,23 @@ def test_extract_requested_slot_from_intent():
     """Test extraction of a slot value from certain intent
     """
 
-    form_spec = {
-        "some_slot": [
-            {
-                "type": "from_intent",
-                "intent": ["some_intent"],
-                "value": "some_value",
-            }
-        ]
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+                "some_slot": [
+                    {"type": "from_intent",
+                     "filling": [{"type": "from_intent",
+                              "intent": ["some_intent"],
+                              "value": "some_value"}],
+                     "utter_on_new_valid_slot": False,
+                     "validation": {"comparatum": ["value1", "value2"],
+                                    "operator": "is_in"}
+                     }
+                ]
+        }
     }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(UserUttered(intent={"name": "some_intent", "confidence": 1.0}))
 
     slot_values = form.extract_requested_slot(
@@ -260,16 +288,20 @@ def test_extract_requested_slot_from_text_with_not_intent():
     """Test extraction of a slot value from text with certain intent
     """
 
-    form_spec = {
-        "some_slot": [
-            {
-                "type": "from_text",
-                "not_intent": ["some_intent"],
-            }
-        ]
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+                "some_slot": [
+                    {"type": "from_text",
+                     "filling": [
+                         {"type": "from_text",
+                          "not_intent": ["some_intent"]}]
+                     }
+                ]
+        }
     }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(
         UserUttered(intent={"name": "some_intent", "confidence": 1.0}, text="some_text")
     )
@@ -310,17 +342,24 @@ def test_extract_requested_slot_from_text_with_not_intent():
     ],
 )
 async def test_validation(value, operator, comparatum, result, caplog):
-    form_spec = {
-        "some_slot": [
-            {
-                "type": "from_intent",
-                "value": value,
-                "validation": {"operator": operator, "comparatum": comparatum,},
-            }
-        ],
+
+    spec = {
+        "name": "default_form",
+        "required_slots": {
+                "some_slot": [
+                    {"type": "from_intent",
+                     "filling": [
+                         {"type": "from_intent",
+                          "value": value}],
+                     "utter_on_new_valid_slot": False,
+                     "validation": {"comparatum": comparatum,
+                                    "operator": operator}
+                     }
+                ]
+        }
     }
 
-    form, tracker = new_form_and_tracker(form_spec, "some_slot")
+    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
     tracker.update(UserUttered(entities=[{"entity": "some_slot", "value": value}]))
 
     events = await form.validate(OutputChannel(), nlg, tracker, Domain.empty())
@@ -391,10 +430,11 @@ async def test_required_slots_with_set_slots(graph, age, authorization_req, with
         if with_slots (setSlot finished=True)
     """
 
-    spec = {"name": "default_form", "graph_elements": graph}
+    spec = {"name": "default_form",
+            "graph_elements": graph}
 
     form, tracker = new_form_and_tracker(
-        spec, "age", ["authorization", "comments"]
+        spec, "age", None, ["authorization", "comments"]
     )
     tracker.update(SlotSet("age", age))
 
