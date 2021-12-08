@@ -58,7 +58,8 @@ class ActionBotfrontForm(Action):
         for s in list(self.form_spec.keys()):  # aurora
             if s == slot:
                 if field == 'filling':
-                    filling = [{k: v for k, v in self.form_spec.get(slot)[0].items() if k in ['intent', 'not_intent', 'type', 'entity', 'value']}]
+                    #filling = [{k: v for k, v in self.form_spec.get(slot)[0].items() if k in ['intent', 'not_intent', 'type', 'entity', 'value']}]
+                    filling = self.form_spec.get(slot)[0][field]
                     return filling  # hack, make it clean when works
                 if field in ['validation', 'utter_on_new_valid_slot']:
                     items = {k: v for k, v in self.form_spec.get(slot)[0].items() if k in [field]}
