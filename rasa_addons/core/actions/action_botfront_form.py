@@ -54,17 +54,18 @@ class ActionBotfrontForm(Action):
     def get_field_for_slot(
         self, slot: Text, field: Text, default: Optional[Any] = None,
     ) -> Optional[List[Dict[Text, Any]]]:
-        # Todo: Find out other possible key words than [filling, validation, utter_on_new_valid_slot]!
-        for s in list(self.form_spec.keys()):  # aurora
+        # aurora >
+        for s in list(self.form_spec.keys()):
             if s == slot:
                 if field == 'filling':
-                    filling = [{k: v for k, v in self.form_spec.get(slot)[0].items() if k in ['intent', 'not_intent', 'type', 'entity', 'value']}]
-                    return filling  # hack, make it clean when works
+                    filling = self.form_spec.get(slot)[0][field]
+                    return filling
                 if field in ['validation', 'utter_on_new_valid_slot']:
                     items = {k: v for k, v in self.form_spec.get(slot)[0].items() if k in [field]}
-                    return default if not items else items[field]  # hack, make it clean when works
+                    return default if not items else items[field]
                 else:
                     return default
+        # </ aurora
         return default
 
     async def run(
