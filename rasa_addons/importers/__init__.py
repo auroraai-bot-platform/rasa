@@ -1,1 +1,0 @@
-from rasa_addons.importers.botfront import BotfrontFileImporter
