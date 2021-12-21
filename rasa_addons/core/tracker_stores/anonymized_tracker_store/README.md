@@ -5,7 +5,7 @@ Currently replaces only phone numbers, IP addresses and Finnish social security 
 
 To use this anonymized tracker store in your Botfront project:
 1. Rebuild Rasa container if you have built it before by running `docker compose up -d --build` on the root of the `docker-compose` dir
-2. Go to Botfront project settings `Endpoints` tab and change `store_type` to `rasa_addons.tracker_stores.anonymized_tracker_store.botfront_anonymized_tracker_store.BotfrontAnonymizedTrackerStore` under `tracker_store` section
+2. Go to Botfront project settings `Endpoints` tab and change `store_type` to `rasa_addons.core.tracker_stores.anonymized_tracker_store.botfront_anonymized_tracker_store.BotfrontAnonymizedTrackerStore` under `tracker_store` section
 3. Restart Rasa container
 4. You can confirm that the anonymized tracker store is activated by checking Rasa container logs and finding following log rows:
 ```
