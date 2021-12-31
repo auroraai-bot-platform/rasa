@@ -46,7 +46,7 @@ class ActionBotfrontForm(Action):
     def required_slots(self, tracker):
         graph = self.form_spec.get("graph_elements")
         if not graph:
-            return list(self.form_spec.keys())  # aurora
+            return list(self.form_spec['required_slots'].keys())  # aurora
         parser = RequiredSlotsGraphParser(graph)
         required_slots = parser.get_required_slots(tracker)
         return required_slots
@@ -55,13 +55,13 @@ class ActionBotfrontForm(Action):
         self, slot: Text, field: Text, default: Optional[Any] = None,
     ) -> Optional[List[Dict[Text, Any]]]:
         # aurora >
-        for s in list(self.form_spec.keys()):
+        for s in list(self.form_spec['required_slots'].keys()):
             if s == slot:
                 if field == 'filling':
-                    filling = self.form_spec.get(slot)[0][field]
+                    filling = self.form_spec['required_slots'].get(slot)[0][field]
                     return filling
                 if field in ['validation', 'utter_on_new_valid_slot']:
-                    items = {k: v for k, v in self.form_spec.get(slot)[0].items() if k in [field]}
+                    items = {k: v for k, v in self.form_spec['required_slots'].get(slot)[0].items() if k in [field]}
                     return default if not items else items[field]
                 else:
                     return default
@@ -77,7 +77,7 @@ class ActionBotfrontForm(Action):
     ) -> List[Event]:
         # attempt retrieving spec
         if not len(self.form_spec):
-            self.form_spec = clean_none_values(domain.slot_mapping_for_form(self.name()))
+            self.form_spec = clean_none_values(domain.slot_mapping_for_form(self.name(), bf_form=True))
             if not len(self.form_spec):
                 logger.debug(
                     f"Could not retrieve form '{tracker.active_loop}', there is something wrong with your domain."

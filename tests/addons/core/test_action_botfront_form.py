@@ -17,7 +17,7 @@ import pytest
 nlg = BotfrontTemplatedNaturalLanguageGenerator()
 
 
-def new_form_and_tracker(form_spec, requested_slot, element=None, additional_slots=[]):
+def new_form_and_tracker(form_spec, requested_slot, additional_slots=[]):
     form = ActionBotfrontForm(form_spec.get("name"))
     tracker = DialogueStateTracker.from_dict(
         "default",
@@ -28,10 +28,9 @@ def new_form_and_tracker(form_spec, requested_slot, element=None, additional_slo
             Slot(name="requested_slot", initial_value=requested_slot),
         ],
     )
-    if element:
-        form.form_spec = form_spec[element]  # load spec manually
-    else:
-        form.form_spec = form_spec
+
+    form.form_spec = form_spec
+
     return form, tracker
 
 
@@ -157,7 +156,7 @@ def test_extract_requested_slot_default():
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(
         UserUttered(entities=[{"entity": "some_slot", "value": "some_value"}])
     )
@@ -189,7 +188,7 @@ def test_extract_requested_slot_from_entity_no_intent():
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(
         UserUttered(entities=[{"entity": "some_entity", "value": "some_value"}])
     )
@@ -222,7 +221,7 @@ def test_extract_requested_slot_from_entity_with_intent():
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(
         UserUttered(
             intent={"name": "some_intent", "confidence": 1.0},
@@ -268,7 +267,7 @@ def test_extract_requested_slot_from_intent():
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(UserUttered(intent={"name": "some_intent", "confidence": 1.0}))
 
     slot_values = form.extract_requested_slot(
@@ -301,7 +300,7 @@ def test_extract_requested_slot_from_text_with_not_intent():
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(
         UserUttered(intent={"name": "some_intent", "confidence": 1.0}, text="some_text")
     )
@@ -359,7 +358,7 @@ async def test_validation(value, operator, comparatum, result, caplog):
         }
     }
 
-    form, tracker = new_form_and_tracker(spec, "some_slot", "required_slots")
+    form, tracker = new_form_and_tracker(spec, "some_slot")
     tracker.update(UserUttered(entities=[{"entity": "some_slot", "value": value}]))
 
     events = await form.validate(OutputChannel(), nlg, tracker, Domain.empty())
@@ -434,7 +433,7 @@ async def test_required_slots_with_set_slots(graph, age, authorization_req, with
             "graph_elements": graph}
 
     form, tracker = new_form_and_tracker(
-        spec, "age", None, ["authorization", "comments"]
+        spec, "age", ["authorization", "comments"]
     )
     tracker.update(SlotSet("age", age))
 
