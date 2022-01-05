@@ -1893,7 +1893,7 @@ class Domain:
 
         return any(key in content for key in ALL_DOMAIN_KEYS)
 
-    def slot_mapping_for_form(self, form_name: Text) -> Dict[Text, Any]:
+    def slot_mapping_for_form(self, form_name: Text, bf_form = None) -> Dict[Text, Any]:
         """Retrieve the slot mappings for a form which are defined in the domain.
 
         Options:
@@ -1911,9 +1911,9 @@ class Domain:
         """
         form = self.forms.get(form_name)
         if form:
+            return form
+        else:
             return form[REQUIRED_SLOTS_KEY]
-
-        return {}
 
 
 class SlotMapping(Enum):
