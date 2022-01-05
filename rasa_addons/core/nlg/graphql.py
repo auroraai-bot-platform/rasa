@@ -134,6 +134,7 @@ class GraphQLNaturalLanguageGenerator(NaturalLanguageGenerator):
             **kwargs,
             language=language,
             projectId=os.environ.get("BF_PROJECT_ID"),
+            environment=os.environ.get("BOTFRONT_ENV", "development"),
         )
 
         logger.debug(
