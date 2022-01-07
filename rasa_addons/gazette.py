@@ -42,9 +42,11 @@ class Gazette(Component):
                 new_entities.append(entity)
                 continue
 
+            # We use lower case in order to have case-insensitive matching
+            locase_gazettes = [g.lower() for g in self.gazette.get(entity["entity"], [])]
             matches = process.extract(
-                entity["value"],
-                self.gazette.get(entity["entity"], []),
+                entity["value"].lower(),
+                locase_gazettes,
                 limit=self.limit,
                 scorer=config["mode"],
             )
