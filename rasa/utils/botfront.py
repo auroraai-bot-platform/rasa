@@ -102,6 +102,9 @@ async def get_config_via_legacy_route(bf_url, project_id):
 def set_endpoints_credentials_args_from_remote(args):
     bf_url = os.environ.get("BF_URL")
     project_id = os.environ.get("BF_PROJECT_ID")
+
+    args.endpoints = None  # aurora (default argument value was changed from rasa-for-botfront to rasa 2.8)
+
     if not project_id or not bf_url:
         return
     here = os.listdir(os.getcwd())
