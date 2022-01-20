@@ -82,6 +82,11 @@ def run(args: argparse.Namespace) -> NoReturn:
     """
     import rasa
 
+    # botfront:start
+    from rasa.utils.botfront import set_endpoints_credentials_args_from_remote
+    set_endpoints_credentials_args_from_remote(args)
+    # botfront:end
+
     args.endpoints = rasa.cli.utils.get_validated_path(
         args.endpoints, "endpoints", DEFAULT_ENDPOINTS_PATH, True
     )
