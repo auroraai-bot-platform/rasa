@@ -64,8 +64,11 @@ ENV PATH="/opt/venv/bin:$PATH"
 
 # update permissions & change user to not run as root
 WORKDIR /app
-RUN chgrp -R 0 /app && chmod -R g=u /app
+RUN groupadd -g 1001 appuser && \
+    useradd -r -u 1001 -g appuser appuser
+RUN chgrp -R 1001 . && chmod -R g=u .
 USER 1001
+RUN mkdir models
 
 # create a volume for temporary data
 VOLUME /tmp
