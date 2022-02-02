@@ -71,6 +71,11 @@ def add_server_arguments(parser: argparse.ArgumentParser) -> None:
         help="Start the web server API in addition to the input channel.",
     )
     server_arguments.add_argument(
+        "--load-s3-language-models",
+        action="store_true",
+        help="Load pre-trained language models from S3.",
+    )
+    server_arguments.add_argument(
         "--response-timeout",
         default=constants.DEFAULT_RESPONSE_TIMEOUT,
         type=int,
