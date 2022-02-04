@@ -93,6 +93,10 @@ def run(args: argparse.Namespace) -> NoReturn:
     args.credentials = rasa.cli.utils.get_validated_path(
         args.credentials, "credentials", DEFAULT_CREDENTIALS_PATH, True
     )
+    
+    if args.load_s3_language_models:
+        from rasa_addons.s3 import load_s3_language_models
+        load_s3_language_models()
 
     if args.enable_api:
         if not args.remote_storage:
