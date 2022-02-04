@@ -37,6 +37,7 @@ query(
         ...on QuickRepliesPayload { text, quick_replies { title, type, ...on WebUrlButton { url }, ...on PostbackButton { payload } } }
         ...on TextWithButtonsPayload { text, buttons { title, type, ...on WebUrlButton { url }, ...on PostbackButton { payload } } }
         ...on ImagePayload { text, image }
+        ...on VideoPayload { text, custom }
         ...on CarouselPayload { template_type, elements { ...CarouselElementFields } }
         ...on CustomPayload { customText: text, customImage: image, customQuickReplies: quick_replies, customButtons: buttons, customElements: elements, custom, customAttachment: attachment }
     }
@@ -158,6 +159,7 @@ class GraphQLNaturalLanguageGenerator(NaturalLanguageGenerator):
                         ", ".join([e.get("message") for e in response.get("errors")])
                     )
                 response = response.get("data", {}).get("getResponse", {})
+                logger.debug(f"NLG RESP: {response}")
                 rewrite_url(response, self.url_substitution_patterns)
                 if "customText" in response:
                     response["text"] = response.pop("customText")
