@@ -159,7 +159,6 @@ class GraphQLNaturalLanguageGenerator(NaturalLanguageGenerator):
                         ", ".join([e.get("message") for e in response.get("errors")])
                     )
                 response = response.get("data", {}).get("getResponse", {})
-                logger.debug(f"NLG RESP: {response}")
                 rewrite_url(response, self.url_substitution_patterns)
                 if "customText" in response:
                     response["text"] = response.pop("customText")
