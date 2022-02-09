@@ -22,9 +22,13 @@ def load_s3_language_models():
     s3_bucket = os.environ['LANGUAGE_MODEL_S3_BUCKET']
     s3_dir = os.environ['LANGUAGE_MODEL_S3_DIR']
     local_dir = os.environ['LANGUAGE_MODEL_LOCAL_DIR']
-    
-    session = boto3.Session()
-    client = boto3.client('s3')
-    resource = boto3.resource('s3')
+    s3_endpoint_url = os.environ['S3_ENDPOINT_URL']
+
+    if not s3_endpoint_url == '':
+        client = boto3.client('s3', endpoint_url=s3_endpoint_url)
+        resource = boto3.resource('s3', endpoint_url=s3_endpoint_url)
+    else:
+        client = boto3.client('s3')
+        resource = boto3.resource('s3')
     
     download_dir(client, resource, s3_dir, local_dir, s3_bucket)
