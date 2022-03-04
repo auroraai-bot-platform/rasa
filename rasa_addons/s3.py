@@ -19,16 +19,18 @@ def download_dir(client, resource, dist, local='/tmp', bucket='your_bucket'):
                 resource.meta.client.download_file(bucket, file.get('Key'), dest_pathname)
 
 def load_s3_language_models():
-    s3_bucket = os.environ['LANGUAGE_MODEL_S3_BUCKET']
+    s3_bucket = os.environ['MODEL_BUCKET']
     s3_dir = os.environ['LANGUAGE_MODEL_S3_DIR']
     local_dir = os.environ['LANGUAGE_MODEL_LOCAL_DIR']
-    s3_endpoint_url = os.environ['S3_ENDPOINT_URL']
+    aws_endpoint = os.environ['AWS_ENDPOINT']
+    region = os.environ['AWS_DEFAULT_REGION']
 
-    if not s3_endpoint_url == '':
-        client = boto3.client('s3', endpoint_url=s3_endpoint_url)
-        resource = boto3.resource('s3', endpoint_url=s3_endpoint_url)
-    else:
+    if aws_endpoint == '':
         client = boto3.client('s3')
         resource = boto3.resource('s3')
+    else:
+        client = boto3.client('s3', region_name=region,  endpoint_url=aws_endpoint)
+        resource = boto3.resource('s3', region_name=region, endpoint_url=aws_endpoint)
+
     
     download_dir(client, resource, s3_dir, local_dir, s3_bucket)
