@@ -1,3 +1,4 @@
+from curses import meta
 import logging
 import warnings
 import uuid
@@ -42,7 +43,7 @@ class WebchatOutput(SocketIOOutput):
         for message_part in message_parts:
             await self._send_message(
                 recipient_id,
-                {"text": message_part, "metadata": kwargs.get("metadata", {})},
+                {"text": message_part, "metadata": self.get_metadata(**kwargs)},
             )
 
     async def send_image_url(
@@ -85,7 +86,7 @@ class WebchatOutput(SocketIOOutput):
         message = {
             "text": text,
             "quick_replies": quick_replies,
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": self.get_metadata(**kwargs),
         }
 
         await self._send_message(recipient_id, message)
@@ -125,6 +126,16 @@ class WebchatOutput(SocketIOOutput):
             {"attachment": attachment, "metadata": kwargs.get("metadata", {})},
         )
 
+    def get_metadata(**kwargs: Any):
+        kwargsKeys: list[str] = ["linkTarget", "userInput", "forceOpen", "Close", "pageChangeCallbacks", "pageEventCallbacks"]
+        metadata: dict[str, str] = {}
+        for key in kwargsKeys:
+            value: str = kwargs.get(key, None)
+
+            if not(value is None):
+                metadata[key] = value
+
+        return metadata
 
 class WebchatInput(SocketIOInput):
     @classmethod
