@@ -6,7 +6,7 @@ This directory contains Botfront and Aurora specific add-ons for rasa.
 
 This module provides function load_s3_language_models() which loads
 pre-trained language models from s3 bucket. The functionality can be
-triggered by giving option `--load_s3_language_models` to rasa. The
+triggered by giving option `--load-s3-language-models` to rasa. The
 following envinronment variables must be defined:
 * LANGUAGE_MODEL_S3_BUCKET: s3 bucket used for download
 * LANGUAGE_MODEL_S3_DIR: s3 bucket directory whose all files are
