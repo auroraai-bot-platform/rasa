@@ -42,7 +42,7 @@ class WebchatOutput(SocketIOOutput):
         for message_part in message_parts:
             await self._send_message(
                 recipient_id,
-                {"text": message_part, "metadata": kwargs.get("metadata", {})},
+                {"text": message_part, "metadata": kwargs},
             )
 
     async def send_image_url(
@@ -52,7 +52,7 @@ class WebchatOutput(SocketIOOutput):
 
         message = {
             "attachment": {"type": "image", "payload": {"src": image}},
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": kwargs,
         }
         await self._send_message(recipient_id, message)
 
@@ -68,7 +68,7 @@ class WebchatOutput(SocketIOOutput):
         message = {
             "text": text,
             "buttons": buttons,
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": kwargs,
         }
 
         await self._send_message(recipient_id, message)
@@ -85,7 +85,7 @@ class WebchatOutput(SocketIOOutput):
         message = {
             "text": text,
             "quick_replies": quick_replies,
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": kwargs,
         }
 
         await self._send_message(recipient_id, message)
@@ -100,7 +100,7 @@ class WebchatOutput(SocketIOOutput):
                 "type": "template",
                 "payload": {"template_type": "generic", "elements": elements},
             },
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": kwargs,
         }
 
         await self._send_message(recipient_id, message)
@@ -112,7 +112,7 @@ class WebchatOutput(SocketIOOutput):
 
         message = {
             **json_message,
-            "metadata": kwargs.get("metadata", {}),
+            "metadata": kwargs,
         }
         await self._send_message(recipient_id, message)
 
@@ -122,7 +122,7 @@ class WebchatOutput(SocketIOOutput):
         """Sends an attachment to the user."""
         await self._send_message(
             recipient_id,
-            {"attachment": attachment, "metadata": kwargs.get("metadata", {})},
+            {"attachment": attachment, "metadata": kwargs},
         )
 
 
