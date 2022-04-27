@@ -1,5 +1,6 @@
 name: Build and deploy botfront compatible image to AWS ECR
 
+# Only build on merge/push to main
 on:
   push:
     branches:
@@ -9,6 +10,7 @@ on:
 
 env:
   ECR_REPOSITORY: rasa-private
+  # The commit SHA that triggered the workflow run
   IMAGE_TAG: ${{ github.sha }}
 
 jobs:
@@ -37,7 +39,7 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.botfront .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-    - name: Tag image with latest as well
+    - name: Tag ECR image with latest as well
       run: |
         MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
         aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
