@@ -10,7 +10,7 @@ on:
 
 jobs:
   deploy:
-    name: Login to AWS, build docker image, push docker image
+    name: Build and push docker image
     runs-on: ubuntu-latest
     steps:
     - name: Configure AWS credentials
@@ -35,3 +35,10 @@ jobs:
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.botfront .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+    - name: Tag image with latest as well
+      env:
+        ECR_REPOSITORY: rasa-private
+      run: |
+        MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=latest --output json | jq --raw-output --join-output '.images[0].imageManifest')
+        aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
