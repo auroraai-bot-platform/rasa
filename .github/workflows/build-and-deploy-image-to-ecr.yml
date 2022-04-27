@@ -8,6 +8,10 @@ on:
     - '*'
   pull_request:
 
+env:
+  ECR_REPOSITORY: rasa-private
+  IMAGE_TAG: ${{ github.sha }}
+
 jobs:
   deploy:
     name: Build and push docker image
@@ -24,21 +28,17 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
     
-    - name: Checkout main
+    - name: Checkout code
       uses: actions/checkout@v2
     
     - name: Build, tag, and push image to Amazon ECR
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        ECR_REPOSITORY: rasa-private
-        IMAGE_TAG: ${{ github.sha }}
       run: |
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f docker/Dockerfile.botfront .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
     - name: Tag image with latest as well
-      env:
-        ECR_REPOSITORY: rasa-private
       run: |
-        MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=latest --output json | jq --raw-output --join-output '.images[0].imageManifest')
+        MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$IMAGE_TAG --output json | jq --raw-output --join-output '.images[0].imageManifest')
         aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
