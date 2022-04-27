@@ -22,10 +22,10 @@ def load_s3_language_models():
     s3_bucket = os.environ['MODEL_BUCKET']
     s3_dir = os.environ['LANGUAGE_MODEL_S3_DIR']
     local_dir = os.environ['LANGUAGE_MODEL_LOCAL_DIR']
-    aws_endpoint = os.environ['AWS_ENDPOINT']
+    aws_endpoint = os.environ.get['AWS_ENDPOINT']
     region = os.environ['AWS_DEFAULT_REGION']
 
-    if aws_endpoint == '':
+    if aws_endpoint == '' or aws_endpoint == None:
         client = boto3.client('s3')
         resource = boto3.resource('s3')
     else:
