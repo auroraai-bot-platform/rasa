@@ -7,7 +7,6 @@ on:
     - main
     tags:
     - '*'
-  pull_request:
 
 env:
   ECR_REPOSITORY: rasa-private
