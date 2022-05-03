@@ -1,4 +1,4 @@
-name: Build and deploy botfront compatible image to AWS ECR
+name: Build and deploy botfront compatible rasa image to AWS ECR
 
 # Only build on merge/push to main
 on:
