@@ -48,4 +48,4 @@ jobs:
         aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST"
 
     - name: Fill systems manager parameter with latest version id
-      run: aws ssm put-parameter --name botfront-image-tag-latest --type String --value $IMAGE_TAG --overwrite
+      run: aws ssm put-parameter --name rasa-image-tag-latest --type String --value $IMAGE_TAG --overwrite
