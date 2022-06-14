@@ -39,13 +39,14 @@ class TextAnonymizer():
             return orig
 
     def anonymize_text(self, text: str) -> str:
-        splitted_text = re.split(self.re_keep_pattern, text)
-        for index, item in enumerate(splitted_text):
-            if re.match(self.re_keep_pattern, item) is None:
-                item = re.sub(self.hetu, "<hetu>", item)
-                item = re.sub(self.phone, self.replace_phone, item)
-                item = re.sub(self.ip, "<ip>", item)
-                item = re.sub(self.ipv6, "<ip>", item)
-                splitted_text[index] = item
-        text = ''.join(splitted_text)
+        if text:
+            splitted_text = re.split(self.re_keep_pattern, text)
+            for index, item in enumerate(splitted_text):
+                if re.match(self.re_keep_pattern, item) is None:
+                    item = re.sub(self.hetu, "<hetu>", item)
+                    item = re.sub(self.phone, self.replace_phone, item)
+                    item = re.sub(self.ip, "<ip>", item)
+                    item = re.sub(self.ipv6, "<ip>", item)
+                    splitted_text[index] = item
+            text = ''.join(splitted_text)
         return text
