@@ -1057,6 +1057,8 @@ def create_app(
             "train your model.",
         )
 
+        logger.info(f"Training payload from botfront: {request.body.decode('utf-8')}")
+
         if request.headers.get("Content-type") == YAML_CONTENT_TYPE:
             training_payload = _training_payload_from_yaml(request, temporary_directory)
         else:
