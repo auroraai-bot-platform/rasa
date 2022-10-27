@@ -1,5 +1,5 @@
 import unittest
-from text_anonymizer import TextAnonymizer
+from rasa_addons.core.tracker_stores.anonymized_tracker_store.text_anonymizer import TextAnonymizer
 
 
 class TestAnonymizer(unittest.TestCase):
@@ -36,13 +36,34 @@ class TestAnonymizer(unittest.TestCase):
                    'Numeroni on <phone>, <phone>, <phone> tai <phone>.')
 
     def test_hetus(self):
-        # These should be replaced by <phone> tag
+        # These should be replaced by <hetu> tag
         positives = ['251308A2983',
                      '251308a2983',
                      '251308a2983',
                      '020976-398H',
                      '020976-398h',
-                     '122498+9842']
+                     '122498+9842',
+                     '010594Y9021',
+                     '020594X903P',
+                     '020594X902N',
+                     '030594W903B',
+                     '030694W9024',
+                     '040594V9030',
+                     '040594V902Y',
+                     '050594U903M',
+                     '050594U902L',
+                     '010516B903X',
+                     '010516B902W',
+                     '020516C903K',
+                     '020516C902J',
+                     '030516D9037',
+                     '030516D9026',
+                     '010501E9032',
+                     '020502E902X',
+                     '020503F9037',
+                     '020504A902E',
+                     '020504B904H',
+                     ]
         for hetu in positives:
             self.check(hetu, '<hetu>')
 

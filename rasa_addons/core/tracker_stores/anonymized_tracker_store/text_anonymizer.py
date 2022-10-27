@@ -21,7 +21,7 @@ class TextAnonymizer():
             '(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)', re.IGNORECASE)
         self.ipv6 = re.compile(
             '\s*(?!.*::.*::)(?:(?!:)|:(?=:))(?:[0-9a-f]{0,4}(?:(?<=::)|(?<!::):)){6}(?:[0-9a-f]{0,4}(?:(?<=::)|(?<!::):)[0-9a-f]{0,4}(?:(?<=::)|(?<!:)|(?<=:)(?<!::):)|(?:25[0-4]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-4]|2[0-4]\d|1\d\d|[1-9]?\d)){3})\s*', re.VERBOSE | re.IGNORECASE | re.DOTALL)
-        self.hetu = re.compile('\d{6}[-+Aa]\d{3}[a-zA-Z0-9]')
+        self.hetu = re.compile('\d{6}[-+AaYXWVUBCDEF]\d{3}[a-zA-Z0-9]')
 
         # list of regex patterns for things we don't want to anoymize from text
         # (e.g. dates)
