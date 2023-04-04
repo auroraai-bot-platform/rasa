@@ -135,7 +135,14 @@ class BotRegressionTestInput(RestInput):
             "actual": [],
             "steps": [],
         }
+        previous_step = {}
         for unformatted_actual_step in actual_steps:
+            current_template = unformatted_actual_step.get('metadata', {}).get('template_name')
+            previous_template = previous_step.get('metadata', {}).get('template_name')
+            if current_template and previous_template:
+                if current_template == previous_template and current_template[0:6] == 'utter_':
+                    continue
+            previous_step = unformatted_actual_step
             actual_step = self.format_as_step(unformatted_actual_step)
             match_index = self.get_index_of_step(actual_step, expected_steps_remaining)
             if match_index is None:
